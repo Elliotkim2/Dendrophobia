@@ -1,5 +1,6 @@
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -11,6 +12,8 @@ import javax.swing.ImageIcon;
 public class Player extends Entity{
 	BufferedImage up1,up2, up3, up4, down1, down2, down3, down4, left1,left2,left3,left4,right1,right2,right3,right4;
 	int velx=0, vely=0;
+	public Rectangle hitBox; 
+	public int playerWidth, playerHeight = 100; 
 	int spriteCounter, spriteNum;
 	String direction=""; 
 	public Player(int x, int y) {
@@ -18,12 +21,13 @@ public class Player extends Entity{
 		setPlayerImg();
 		direction="down";
 		spriteNum=1;
+		hitBox = new Rectangle(x, y, up1.getWidth(), up2.getHeight()); 
 		update();
 		// TODO Auto-generated constructor stub
 	}
 	public void update(){
-		y+=vely;
-		x+=velx;
+		//y+=vely;
+		//x+=velx;
 		spriteCounter++;
 		if(spriteCounter>30) {
 			if(spriteNum==1) {
@@ -87,8 +91,14 @@ public class Player extends Entity{
 			
 			break;
 		}
-		if(vely==0&&velx==0)
+		if(vely==0&&velx==0&&direction.equals("up"))
+			image=up1;
+		else if(vely==0&&velx==0&&direction.equals("down"))
 			image=down1;
+		else if(vely==0&&velx==0&&direction.equals("right"))
+			image=right1;
+		else if(vely==0&&velx==0&&direction.equals("left"))
+			image=left1;
 		g2d.drawImage(image, x, y, 100, 100, null);
 	}
 public void setPlayerImg(){

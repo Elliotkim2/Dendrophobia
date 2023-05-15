@@ -1,5 +1,6 @@
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +12,7 @@ public class GameObject implements ScrollObject{
 	private static double scrollConst = .95; 
 	private BufferedImage objectImg;
 	private String fileName; 
+	private Rectangle hitBox; 
 	private int height,length;
 	
 	public GameObject(int objectX, int objectY, String fileName) {
@@ -18,13 +20,36 @@ public class GameObject implements ScrollObject{
 		this.objectX = objectX;
 		this.objectY = objectY;
 		this.fileName = fileName; 
+		
 		try {
 			objectImg = ImageIO.read(new File(fileName));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+		
+		hitBox = new Rectangle(objectX, objectY, objectImg.getWidth(), objectImg.getHeight()); 
 
+	}
+	
+	
+	public boolean isTouchingPlayer(Player p) {
+		if(hitBox.intersects(p.hitBox)) {
+			if(p.direction.equals("left")) {
+				
+				p.x = 2; 
+				return true; 
+			}
+			else if (p.direction.equals("right")){
+				p.x = 100; 
+				return true; 
+			}
+			else {
+				p.x = p.x; 
+			}
+		}
+		return false; 
+		
 	}
 	
 	public void drawObject(Graphics2D g2d) {
@@ -46,6 +71,7 @@ public class GameObject implements ScrollObject{
 	public void update(Player p) {
 		objectX += -(p.getXVel());
 		objectY += -(p.getYVel()); 
+		isTouchingPlayer(p); 
 		
 	}
 

@@ -10,12 +10,14 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.security.SecureRandom;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class GameFrame extends JPanel implements ActionListener, Runnable{
 	Timer mainTimer;
+	GameObject[] objects = new GameObject[15];
 	final int originalTile =16;
 	final int scale=3;
 	final int tileSize= originalTile*scale;
@@ -23,19 +25,23 @@ public class GameFrame extends JPanel implements ActionListener, Runnable{
 	final int maxScreenRow=12;
 	final int screenWidth= tileSize*maxScreenCol;
 	final int screenHeight= tileSize* maxScreenRow;
+	SecureRandom random = new SecureRandom(); 
 	Thread gameThread;
 	Player player;
-	BufferedImage testImg;
-	int testX, testY; 
+	BufferedImage treeImg;
 	public GameFrame() {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
 		this.setBackground(Color.black);
 		this.setDoubleBuffered(true);
-
+		
+		for(int i = 0; i < objects.length; i++) {
+			objects[i] = new GameObject(random.nextInt(screenWidth*2), random.nextInt(screenHeight*2), "tree.png"); 
+		}
+		
 		setFocusable(true);
 		
 		
-		player = new Player(100,100);
+		player = new Player(screenWidth/2,screenHeight/2);
 		addKeyListener(new KeyAdapt(player));
  		mainTimer = new Timer(10,this);
  		mainTimer.start();
@@ -46,16 +52,26 @@ public class GameFrame extends JPanel implements ActionListener, Runnable{
 		//g2d.drawImage(testImg, testX, testY, null);
 		player.draw(g2d);
 		
+		for(int i=0; i<objects.length; i++) {
+			objects[i].drawObject(g2d);
+		}
+		
 	}
 	
 	public void update() {
 		player.update();
+		System.out.println(player.direction);
+		for(int i=0; i<objects.length; i++) {
+			objects[i].update(player);
+			//objects[i].isTouchingPlayer(player);
+		}
+		
 	//	player.draw();
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		player.update();
+		//player.update();
 		update();
 		repaint();
 		
