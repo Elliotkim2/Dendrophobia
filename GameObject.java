@@ -34,26 +34,81 @@ public class GameObject implements ScrollObject{
 	
 	
 	public boolean isTouchingPlayer(Player p) {
+		 if (
+				    hitBox.x < p.hitBox.x + p.hitBox.width &&
+				    hitBox.x + hitBox.width > p.hitBox.x &&
+				    hitBox.y < p.hitBox.y + p.hitBox.height &&
+				    hitBox.height + hitBox.y > p.hitBox.y
+				  ) {
+				    // Collision detected!
+				   return true;
+				  } 
+		 else if(  objectX < p.x + p.playerWidth &&
+				    objectX + objectImg.getWidth() > p.x &&
+				    objectY < p.y + p.playerHeight &&
+				    objectImg.getHeight() + objectY > p.y)
+			 return true;
+				 else {
+				    // No collision
+				    return false;
+				  }
+				}
+	public boolean letGo(Player p) {
+		if(isTouchingPlayer(p)&&p.direction=="right")
+		{
+			if(!p.direction.equals("right")) {
+				return true;
+			}
+			
+		}
+		else 	if(isTouchingPlayer(p)&&p.direction=="left")
+		{
+			if(!p.direction.equals("left")) {
+				return true;
+			}
+			
+		}
+		else 	if(isTouchingPlayer(p)&&p.direction=="up")
+		{
+			if(!p.direction.equals("up")) {
+				return true;
+			}
+			
+		}
+		else if(isTouchingPlayer(p)&&p.direction=="down")
+		{
+			if(!p.direction.equals("down")) {
+				return true;
+			}
+			
+		}
+		
+		return false;
+	}
+	/*	
 		if(hitBox.intersects(p.hitBox)) {
 			if(p.direction.equals("left")) {
 				
-				p.x = 2; 
+				//p.velx = 0;
+				//p.x += 2; 
 				return true; 
 			}
 			else if (p.direction.equals("right")){
-				p.x = 100; 
+				//p.velx = 0;
+				//p.x += -2; 
 				return true; 
 			}
 			else {
-				p.x = p.x; 
+				//p.x = p.x; 
 			}
 		}
-		return false; 
+		return false; */
 		
-	}
+	
 	
 	public void drawObject(Graphics2D g2d) {
 		g2d.drawImage(objectImg, objectX, objectY, null); 
+		g2d.draw(hitBox);
 	}
 	public static BufferedImage resize(BufferedImage img, int newW, int newH) { 
 	    Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
@@ -69,9 +124,25 @@ public class GameObject implements ScrollObject{
 	@Override
 	
 	public void update(Player p) {
-		objectX += -(p.getXVel());
-		objectY += -(p.getYVel()); 
-		isTouchingPlayer(p); 
+		if(isTouchingPlayer(p)) {
+			if(letGo(p)) {
+				objectX += -(p.getXVel());
+				objectY += -(p.getYVel()); 
+				hitBox = new Rectangle(objectX, objectY, objectImg.getWidth(), objectImg.getHeight());
+			}else {
+			objectX += (p.getXVel());
+			objectY += (p.getYVel());
+			hitBox = new Rectangle(objectX, objectY, objectImg.getWidth(), objectImg.getHeight());
+			}	
+		}
+		else {
+			objectX += -(p.getXVel());
+			objectY += -(p.getYVel()); 
+			hitBox = new Rectangle(objectX, objectY, objectImg.getWidth(), objectImg.getHeight());
+		}
+		
+		
+		
 		
 	}
 
